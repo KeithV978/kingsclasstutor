@@ -1,26 +1,28 @@
 const router = require('express').Router();
 const multer = require('../middleware/multer');
-const parentController = require('../controllers/parentController/parentController');
+const {parentSignup, parentLogin, confirmEmail, editParentProfile, parentProfile, updatePassword, parentProfilePhotoUpload} = require('../controllers/parentController/parentController');
 
 	// CREATE CREATE CREATE CREATE
 
 	// Signup a new parent
-	router.route('/signup').post(parentController.parentSignup)
+	router.route('/signup').post(parentSignup)
+
+	// Login to Parent account
+	router.route('/login').post(parentLogin)
 
 	// Confirm Email after signup
-	router.route('/confirmEmail/:id').post(parentController.confirmEmail)
-
-	// Upload Photo
-	router.route('/uploadPhoto/:id').post(parentController.parentProfilePhotoUpload)
+	router.route('/confirmEmail/:id').post(confirmEmail)
 
 	// Edit Profile Data
-	router.route('/editparentProfile/:id').post(parentController.editParentProfile)
+	router.route('/editProfile/:id').post(editParentProfile)
 
 	// Get Parent Details
-	router.route('/parentProfile/:id').get(parentController.ParentProfile)
-
+	router.route('/Profile/:id').get(parentProfile)
 	
 	// Update Password
-	router.route('/resetPassword/:id').post(parentController.updatePassword)
+	router.route('/resetPassword/:id').post(updatePassword)
+
+	// Upload Photo
+	router.route('/uploadPhoto/:id').post(parentProfilePhotoUpload)
 
 module.exports = router;

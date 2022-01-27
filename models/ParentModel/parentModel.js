@@ -7,7 +7,7 @@ const parentSchema = new Schema({
 		type: Boolean,
 		default: false
 	},
-	signedInAs:{
+	userType:{
 		type: String,
 		default: "parent"
 	},
@@ -51,7 +51,11 @@ const parentSchema = new Schema({
 		type: Number,
 		trim: true,
 		min: 11
-	}
+	},
+	isAdmin:{
+		type: Boolean,
+		default: false
+	 }
 },
 {
 	timestamps: true

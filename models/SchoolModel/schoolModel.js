@@ -7,7 +7,7 @@ const schoolSchema = new Schema({
 		type: Boolean,
 		default: false
 	},
-	signedInAs:{
+	userType:{
 		type: String,
 		default: "school"
 	},
@@ -42,7 +42,11 @@ const schoolSchema = new Schema({
 	 schoolEmblem:{
 		type: String,
 		min:10
-	}	
+	},
+	isAdmin:{
+		type: Boolean,
+		default: false
+	}
 },{timestamps: true})
 
 

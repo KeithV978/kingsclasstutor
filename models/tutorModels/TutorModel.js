@@ -7,7 +7,7 @@ const tutorSchema = new Schema({
 		type: Boolean,
 		default: false
 	},
-    signedInAs:{
+    userType:{
 		type: String,
 		default: "tutor"
 	},
@@ -107,6 +107,10 @@ const tutorSchema = new Schema({
         type: String
     },
     hired:{
+        type: Boolean,
+        default: false
+    },
+    isAdmin:{
         type: Boolean,
         default: false
     }
