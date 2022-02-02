@@ -1,4 +1,4 @@
-const Tutor =  require('../../models/tutorModels/TutorModel');
+const Tutor =  require('../../models/TutorModels/TutorModel');
 const emailSender = require('../email/emailSender');
 const emailMessages = require('../email/emailMessagesTepmlate');
 const {CLIENT_ORIGIN} = require('../../config');
@@ -10,10 +10,11 @@ module.exports = {
 		// Fisrt Check if User already exists
 		Tutor.findOne({email: req.body.email}, (err, tutor)=>{
 			if(err){
-				reject(new Error('Server Error'))
+				res.send({message :'Server Error: ' +err})
 			}
+			// If it exists, reject the registeration
 			if(tutor){
-				reject(new Error("A user with this email has already been registered. Please signup with a new email."))
+				res.send({message: "A user with this email has already exists. Please signup with a different email."})
 			}else{
 				// Create the new User Since it doesn't exist.
 				let email = req.body.email;
@@ -22,12 +23,12 @@ module.exports = {
   
 				// Save the new User
 				newTutor.save()
-				.then( item =>{
+				.then( savedTutor =>{
 					// send an mail to confirm email address.
-					emailSender(item.email, emailMessages.tutorConfirmationMessage(item._id, "tutor"))
-					return res.status(200)
+					emailSender(savedTutor.email, emailMessages.tutorConfirmationMessage(savedTutor._id, "tutor"))
+					return res.send({message: "Your signup was successful. Please verify your email. A verification code has been sent to "+savedTutor.email})
 				})
-				.catch(err => res.send(err));
+				.catch(err => res.send({message: err}));
 			}
 		}); 
 	},
@@ -37,23 +38,22 @@ module.exports = {
 		const {id} = req.params;
 		
 		Tutor.findByIdAndUpdate(id, {
-			    confirmEmail: true
+			    confirmEmail: true 
 		},(err)=>{ 
 			if(err) res.send(err);
-			else res.redirect(`${CLIENT_ORIGIN}/profile/${id}`);
-		})	
+		})	 
+		return res.redirect(`${CLIENT_ORIGIN}/profile/${id}`);
 	},
 
 	// Login a Tutor
-	tutorLogin: (req, res) =>{
+	tutorSignin: (req, res) =>{
 		let {email, password} = req.body;
 
 		Tutor.findOne(email, (err, tutor)=>{
 			if(err) res.send(err);
 			if(tutor){
-				new matchPassword(password, tutor.password, (unmatching, matching)=>{
+				matchPassword(password, tutor.password, (unmatching) =>{
 					if(unmatching) res.send({message: "Password is not correct"});
-					
 					// Create JWT here and send response
 				})
 			}
@@ -67,47 +67,18 @@ module.exports = {
 		   .catch(err => res.status(400).json('Error: '+ err));
 	},
 
-	// Edit Mode of service
-	tutorEditServices: (req, res) =>{
-		Tutor.findByIdAndUpdate(req.params.id,{ 
-			    department: req.body.department,
-			    subjects: req.body.subjects,
-			    classes: req.body.classes,
-			    adults_classes: req.body.adults_classes,
-			    hourly_rate: req.body.hourly_rate,
-			    mode_of_service_delivery: req.body.mode_of_service_delivery
-		    },
-		    (err)=>{
-			if(err) res.send(err);
-			else res.status(200);
-		    })		    
-	},
-
-	// Edit Bio data
-	tutorEditBio: (req, res) =>{
-		Tutor.findByIdAndUpdate(req.params.id,
-			{
-			    firstName: req.body.firstName,
-			    lastName: req.body.lastName,
-			    gender: req.body.gender,
-			    date_of_birth: req.body.date_of_birth,
-		    	},
-		    	(err)=>{
-			if(err) res.send(err);
-			else res.status(200);
-		})
-	},
-
 	// EDit Contact Info
-	tutorEditContactInfo: (req, res) =>{
+	updateTutorProfile: (req, res) =>{
+		
 		Tutor.findByIdAndUpdate(req.params.id,{
 			    phone: req.body.phone,
 			    address: { street: req.body.street, city: req.body.city, state: req.body.state}
 		    },
 		    (err)=>{
 			if(err) res.send(err);
-			else res.status(200);
-		    })
+			
+		    }) 
+		    return res.status(200);
 		    
 	},
 

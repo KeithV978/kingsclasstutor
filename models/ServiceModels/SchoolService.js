@@ -4,28 +4,26 @@ const Schema = mongoose.Schema;
 
 const serviceRenderedSchema = new Schema({
 	client_Id:{
-		type: String
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "TutorProfile"
 	},
 	client_Name:{
 		type: String
 	},
 	tutor_Id:{
-		type: String
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "TutorProfile"
 	},
 	tutor_Name:{
 		type: String
 	},
-	start_date:{
-		type: String
+	paid_for_service:{
+		type: Boolean,
+		default: false
 	},
-	end_date:{
-		type: String
-	},
-	payment_receipts:{
-		type: Array
-	}, 
-	release_payment:{
-		type: Boolean
+	amount_paid:{
+		type: Number,
+		default: 0
 	}
 }, {timestamps: true});
 

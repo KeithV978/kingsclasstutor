@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 
-const schoolSchema = new Schema({
+const School = mongoose.model('School',
+ new mongoose.Schema({
 	confirmEmail:{
 		type: Boolean,
 		default: false
@@ -11,7 +12,7 @@ const schoolSchema = new Schema({
 		type: String,
 		default: "school"
 	},
-    schoolEmail:{
+    email:{
         type: String,
 	   required: [true, 'Pleaser enter a valid email address'],
         unique: true,
@@ -25,6 +26,7 @@ const schoolSchema = new Schema({
         min: [6, 'Password must be at least 6 characters'],
         select: false
     },
+    profile:{
 	schoolName:{
 		type: String,
 		trim: true,
@@ -35,21 +37,25 @@ const schoolSchema = new Schema({
 		 trim: true,
 		 min: 6
 	 },
-	 schoolAddress:{
-		 type: String,
-		 min:10
+	 address:{
+		 street:{
+			 type: String
+		 },
+		 city:{
+			 type: String
+		 },
+		 _state:{
+			 type: String
+		 }		 
+	 },
+	 phone:{
+		 type: Number
 	 },	
-	 schoolEmblem:{
-		type: String,
-		min:10
-	},
-	isAdmin:{
-		type: Boolean,
-		default: false
+	 schoolEmblemPhoto:{
+		type: String
 	}
-},{timestamps: true})
+    }
+},{timestamps: true}))
 
-
-const School = mongoose.model('School', schoolSchema);
 
 module.exports = School;

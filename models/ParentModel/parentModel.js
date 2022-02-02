@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 
-const parentSchema = new Schema({
+const Parent = mongoose.model('Parent', 
+ new mongoose.Schema({
 	confirmEmail:{
 		type: Boolean,
 		default: false
@@ -25,42 +26,48 @@ const parentSchema = new Schema({
         min: [6, 'Password must be at least 6 characters'],
         select: false
     },
-	firstName:{
-		type: String,
-		trim: true,
-		min: 3
-	 },
-	 lastName:{
-		type: String,
-		trim: true,
-		min: 3
-	 }, 
-		street: {
-		    type: String, 
-		    min: 3
-		},
-		city: {
-		    type: String, 
-		    min: 3
-		},
-		_state: {
-		    type: String, 
-		    min: 3
-		},
-	phone:{
-		type: Number,
-		trim: true,
-		min: 11
-	},
 	isAdmin:{
 		type: Boolean,
 		default: false
-	 }
+	 }, 
+	profile:{
+		firstName:{
+			type: String,
+			trim: true,
+			min: 3
+		 },
+		 lastName:{
+			type: String,
+			trim: true,
+			min: 3
+		 }, 
+			street: {
+			    type: String, 
+			    min: 3
+			},
+			city: {
+			    type: String, 
+			    min: 3
+			},
+			_state: {
+			    type: String, 
+			    min: 3
+			},
+		phone:{
+			type: Number,
+			trim: true,
+			min: 11
+		},
+		services:[
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "ServiceInProgress"
+			}
+		]
+	}
 },
 {
 	timestamps: true
-});
-
-const Parent = mongoose.model('Parent', parentSchema);
+}))
 
 module.exports = Parent;

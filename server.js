@@ -38,7 +38,7 @@ const dbURI = process.env.LOCALDB_URI;
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
 
 mongoose.connection.on('connected', ()=>{
-    console.log("MongoDB database connection established successly.");
+    console.log("MongoDB connection established successfully.");
      //Start Server if Database connection is successful
     app.listen(port, ()=>{
      console.log(`Server started on port: ${port}`);
@@ -50,7 +50,7 @@ mongoose.connection.on('error', err =>{
 });
 
 mongoose.connection.on('disconnected', ()=>{
-    console.log("MongoDB database disconnected.");
+    console.log("MongoDB disconnected.");
 });
 
 process.on('SIGINT', ()=>{

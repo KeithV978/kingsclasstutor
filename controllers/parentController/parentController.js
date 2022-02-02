@@ -1,6 +1,10 @@
+//Import Models
 const Parent = require('../../models/ParentModel/parentModel');
+const Tutor  = require('../../models/TutorModels/TutorModel');
+const ServiceInProgress = require('../../models/ServiceModels/ParentService'); 
 const emailSender = require('../email/emailSender');
 const emailMessages = require('../email/emailMessagesTepmlate');
+const ParentService = require('../../models/ServiceModels/ParentService');
 
 module.exports = {
 	// Sign new Parent Up
@@ -65,7 +69,7 @@ module.exports = {
 	updatePassword: (req, res)=>{
 		Parent.findByIdAndUpdate(req.params.id, {
 			password: req.body.password
-		},(errr)=>{
+		},(err)=>{
 			if(err) res.send(err);
 			else res.status(200);
 		})
@@ -89,5 +93,33 @@ module.exports = {
 	parentProfilePhotoUpload: (req, res)=>{
 
 	}, 
- 
+	parentDashboard: (req, res) =>{
+
+	},
+
+	//First Stage in Hiring Process
+	stageOne: (req, res)=>{
+		let {_class, subject, gender} = req.body;
+		Tutor.find({_class, subject, gender}, (err, tutors)=>{
+			if(err) res.send({message: err});
+			res.send(tutors);
+		})		
+	},
+	stageTwo: (req, res)=>{
+		let {parent_Id, parent_Name, tutor_Id, tutor_Name, duration, hours, days, start_date, end_date, first_payment_receipt_no, first_payment} = req.body;
+		const newService = new ParentService({parent_Id, parent_Name, tutor_Id, tutor_Name, duration, hours, days, start_date, end_date, first_payment_receipt_no, first_payment});
+
+		newService.save()
+		.then(service =>{
+			Parent.findByIdAndUpdate(parent_Id, {
+				services: [...services, service._id]
+			}, (err)=>{
+				res.send({message: err});
+			})
+			res.send({message: service})
+		})
+		.catch(err=>{
+			res.send({message: err})
+		})
+	}
 }
