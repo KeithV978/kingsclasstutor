@@ -2,7 +2,11 @@ const Tutor =  require('../../models/TutorModels/TutorModel');
 const emailSender = require('../email/emailSender');
 const emailMessages = require('../email/emailMessagesTepmlate');
 const {CLIENT_ORIGIN} = require('../../config');
-const matchPassword = require('../authentication/matchPassword');
+const {signAccessToken} = require('../../middleware/JwtHelper');
+// const matchPassword = require('../authentication/matchPassword');
+
+var jwt = require('jsonwebtoken');
+var bcrypt = require("bcryptjs");
 
 module.exports = {
 	// Sign New Tutor Up
@@ -18,7 +22,7 @@ module.exports = {
 			}else{
 				// Create the new User Since it doesn't exist.
 				let email = req.body.email;
-				let password =  req.body.password;
+				let password =  bcrypt.hashSync(req.body.password, 8);
 				const newTutor = new Tutor({email, password});
   
 				// Save the new User
@@ -49,15 +53,43 @@ module.exports = {
 	tutorSignin: (req, res) =>{
 		let {email, password} = req.body;
 
-		Tutor.findOne(email, (err, tutor)=>{
-			if(err) res.send({message: err});
-			if(tutor){
-				matchPassword(password, tutor.password, (unmatching) =>{
-					if(unmatching) res.send({message: "Password is not correct"});
-					// Create JWT here and send response
-				})
+		Tutor.findOne(email)
+		.exec((err, tutor) => {
+			if (err) {
+				res.status(500).send({ message: err });
+				return;
 			}
-		})
+			if (!tutor) {
+				return res.status(404).send({ message: "This email has not been Registered. Please signup to continue." });
+			   }
+			   var passwordIsValid = bcrypt.compareSync(req.body.password, tutor.password);
+			 
+			   if (!passwordIsValid) {
+				  return res.status(401).send({
+					accessToken: null,
+					message: "Password is Incorrect. Please try again"
+				});
+			   }
+			   var bodyPayload = {
+				id: tutor._id, 
+				email: tutor.email,
+				firstName: tutor.firstName,
+				lastName: tutor.lastName,
+			   }
+			   const {accessToken, refreshToken} = signAccessToken(res, bodyPayload);
+			   res.status(200).send({
+				bodyPayload,
+				accessToken: accessToken,
+				refreshToken: refreshToken
+			   });
+		});
+
+	},
+
+	//Refresh JWT Token
+	refreshToken: (req, res) => {
+		const refreshToken = signRefreshToken(req)
+		return res.status(200).json(refreshToken)
 	},
 
 	// Send a particular tutor profile
