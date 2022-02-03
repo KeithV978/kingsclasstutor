@@ -40,7 +40,7 @@ module.exports = {
 		Tutor.findByIdAndUpdate(id, {
 			    confirmEmail: true 
 		},(err)=>{ 
-			if(err) res.send(err);
+			if(err) res.send({meaage: err});
 		})	 
 		return res.redirect(`${CLIENT_ORIGIN}/profile/${id}`);
 	},
@@ -50,7 +50,7 @@ module.exports = {
 		let {email, password} = req.body;
 
 		Tutor.findOne(email, (err, tutor)=>{
-			if(err) res.send(err);
+			if(err) res.send({message: err});
 			if(tutor){
 				matchPassword(password, tutor.password, (unmatching) =>{
 					if(unmatching) res.send({message: "Password is not correct"});

@@ -1,14 +1,22 @@
-module.exports = {
-	authenticateToken: (req, res, next)=>{
-		var authHeader = req.headers['authorization'];
-		var token = authHeader && authHeader.split(' ')[1]
-		if(token == null) return res.sendStatus(401); // Dont have a Token
+const jwt = require("jsonwebtoken");
 
-		// Verify the access token if valid
-		jwt.verify(token, process.env.ACCESS_TOKEN, (err, user)=>{
-			if(err) return res.sendStatus(403) // Have Token but token no longer valid
-			req.user = user;
-			next();
-		})
-	}
-}
+verifyToken = (req, res, next) => {
+  let token = req.headers["x-access-token"];
+
+  if (!token) {
+    return res.status(403).send({ message: "No token provided!" });
+  }
+
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(401).send({ message: "You have to signin/signup to view this page" });
+    }
+    req.userId = decoded.id;
+    next();
+  });
+};
+
+const authJwt = {
+	verifyToken
+   };
+   module.exports = authJwt;
