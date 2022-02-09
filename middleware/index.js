@@ -1,7 +1,9 @@
 const authJwt = require("./authToken");
-const multer = require("./multer");
+const {photoUploader} = require("./multer/photoUploader");
+const {resumeUploader} = require("./multer/resumeUploader");
 
 module.exports = {
   authJwt,
-  multer
+  photoUploader,
+  resumeUploader
 };

@@ -7,26 +7,18 @@ const Tutor = mongoose.model('Tutor',
 	confirmEmail:{
 		type: Boolean,
 		default: false
-	},
-    userType:{
-		type: String,
-		default: "tutor"
-	},
+	}, 
     email:{
-        type: String,
-	   required: [true, 'Pleaser enter a valid email address'],
-        unique: true,
-        trim: true,
-        min: 9,
-        lowercase: true
+        type: String
     },
     password:{
-        type: String,
-        required: [true, 'Pleaser Enter A Password'],
-        min: [6, 'Password must be at least 6 characters'],
-        select: false
+        type: String
     }, 
     profile:{
+	profile_photo:{
+	     data: Buffer,
+          contentType: String
+	},
 	name:{
 		firstName:{
 		   type: String,
@@ -72,7 +64,7 @@ const Tutor = mongoose.model('Tutor',
 			trim: true,
 	    }
 	 }],
-	 classes_i_teach:{
+	 classesITeach:{
 		 type: Array
 	 },
 	resume:{
@@ -82,43 +74,32 @@ const Tutor = mongoose.model('Tutor',
 	    type: Number,
 	    default: 2
 	},
-	can_teach_adults:{
+	canTeachAdults:{
 		type: Boolean,
-		enum: [true, false]
+		default: false
 	},
-	full_time:{
-		type: Boolean
+	fullOrPartTime:{
+		type: String,
+		enum: ["Full Time", "Part Time", "Both"]
 	},
-	part_time:{
-		type: Boolean
+	schoolOrPrivateTutor:{
+		type: String,
+		enum: ["School Teacher", "Private Teacher", "Both"]
 	},
-	school_teacher:{
-		type: Boolean
-	},
-	private_tutor:{
-		type: Boolean
-	},
-	profile_photo:{
-	    type: String
-	},
-	date_of_birth:{
+	dateOfBirth:{
 	    type: Date
 	},
 	department:{
 	    type: String
 	},
-	currently_hired:{
+	currentlyHired:{
 	    type: Boolean,
 	    default: false
 	},
-	parentHires:[{
+	hires:[{
 		type: mongoose.Schema.Types.ObjectId,
-		ref: "ParentService"
-	}],
-	schoolHires:{
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "SchoolService"
-	}
+		ref: "Services"
+	}]
     }
 }, 
 {

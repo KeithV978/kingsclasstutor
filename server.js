@@ -13,33 +13,25 @@ const port = process.env.PORT || PORT;
 
 // Middlewares.
 // Allow Cross Origin Requests
-app.use(cors({origin: "http://localhost:3000"}));
+app.use(cors({origin: CLIENT_ORIGIN}));
 
 //Body Parser Middleware for Express
 app.use(express.json());
 
-app.use(
-    cookieSession({
-      name: "tkct-session",
-      secret: "BOOKE", // should use as secret environment variable
-      httpOnly: true
-    })
-  );
-// app.use(function(req, res, next) {
-//     res.header(
-//       "Access-Control-Allow-Headers",
-//       "x-access-token, Origin, Content-Type, Accept"
-//     );
-//     next();
-//   });
+
+app.use('./routes/tutorRouter', function(req, res, next) {
+    res.header(
+    "Access-Control-Allow-Headers",
+    "x-access-token, Origin, Content-Type, Accept"
+    );
+    next();
+});
 
 const tutor = require('./routes/tutorRouter');
-const parent = require('./routes/parentRouter');
-const school = require('./routes/schoolRouter');
+const hire = require('./routes/hireRouter');
 
 app.use('/tutor', tutor); 
-app.use('/parent', parent);
-app.use('/school', school);
+app.use('/hire', hire);
 
 const dbURI = process.env.LOCALDB_URI;
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });

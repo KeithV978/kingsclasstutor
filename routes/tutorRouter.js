@@ -1,9 +1,10 @@
 const router = require('express').Router();
-const multer = require('../middleware/multer');
+const {photoUploader, resumeUploader} = require('../middleware');
 const {tutorSignup, confirmEmail, getTutorProfile,tutorSignin, updateTutorProfile,
-	updatePassword,tutorProfileUploadResume, tutorProfileUploadPhoto, refreshToken} = require('../controllers/tutorController/tutorController');
-const verifyToken = require('../middleware/authToken');
- 
+	updatePassword,tutorProfileUploadResume, tutorProfileUploadPhoto,
+	getTutorProfileUploadResume, getTutorProfileUploadPhoto, refreshToken} = require('../controllers/tutorController/tutorController');
+const {verifyToken} = require('../middleware/authToken');
+
 	// Signup a new tutor
 	router.route('/signup').post(tutorSignup);
 
@@ -16,20 +17,25 @@ const verifyToken = require('../middleware/authToken');
 	// Confirm Email after signup
 	router.route('/confirmEmail/:id').post(confirmEmail);
 
-	// Load Edit Profile Page
+	// Get Tutor Profile Page
+	// POST
+	router.route('/profile/:id').post(verifyToken, updateTutorProfile);
+	// GET
 	router.route('/profile/:id').get(verifyToken, getTutorProfile);
-
-	//Edit Profile
-	router.route('/profile/:id').put(verifyToken, updateTutorProfile);
-
+	
 	// Update Password
 	router.route('/updatePassword/:id').post(verifyToken, updatePassword);
 
 	// Upload Resume
-	router.route('/uploadResume/:id').post(verifyToken, tutorProfileUploadResume);
+	//POST
+	router.route('/uploadResume/:id').post([verifyToken,resumeUploader], tutorProfileUploadResume);
+	//GET
+	router.route('/uploadResume/:id').get(verifyToken, getTutorProfileUploadResume);
 
 	// Upload Profile Photo
-	router.route('/uploadPhoto/:id').post(verifyToken, tutorProfileUploadPhoto);
-
+	// POST
+	router.route('/uploadPhoto/:id').post([verifyToken, photoUploader], tutorProfileUploadPhoto);
+	// GET
+	router.route('/uploadPhoto/:id').get(verifyToken, getTutorProfileUploadPhoto);
 
 module.exports = router;
